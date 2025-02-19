@@ -32,3 +32,20 @@ actual db_url: %s
 `, expected.db_url, actual.DBUrl)		
 	}
 }
+
+func TestWriteConfig(t *testing.T) {
+	input := "megarage9000"
+
+	configTest := Config{
+		DBUrl: "postgres://example",
+	}
+	
+	err := configTest.SetUser(input)
+	if err != nil {
+		t.Errorf(
+`
+--- TEST FAILED ---
+Error in SetUser() using username %s: %s
+`, input, err)
+	}
+}
