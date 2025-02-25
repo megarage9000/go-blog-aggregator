@@ -64,16 +64,19 @@ func (c *Config) writeToConfig() error {
 	if err != nil {
 		return err
 	}
-	// Opening file as readonly (0644 = read write mode)
-	file, err := os.OpenFile(location, os.O_WRONLY, 0644)
+
+	// Create overrwrites!
+	file, err := os.Create(location)
 	if err != nil {
 		return fmt.Errorf("error in opening file %s: %s\n", location, err)
 	}
 
+	defer file.Close()
+
 	// Write data into file location
-	_, readErr := file.Write(data)
-	if readErr != nil {
-		return fmt.Errorf("error in writing to file %s: %s\n", location, readErr)
+	_, writeErr := file.Write(data)
+	if writeErr != nil {
+		return fmt.Errorf("error in writing to file %s: %s\n", location, writeErr)
 	}
 
 	return nil
