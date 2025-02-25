@@ -1,0 +1,5 @@
+postgres://postgres:whatablastyo@localhost:5432/gator
+
+Accessing our postgres database:
+    sudo -u megarage9000 psql gator 
+    sudo -u postgres psql gator 
