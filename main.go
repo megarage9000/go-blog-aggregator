@@ -2,24 +2,33 @@ package main
 
 import (
 	"internal/config"
+	"github.com/megarage9000/go-blog-aggregator/internal/database"
 	"fmt"
 	"os"
+	"database/sql"
 )
+
+import _ "github.com/lib/pq"
 
 func main() {
 	configuration, err := config.Read()
 	if err != nil {
 		fmt.Printf("Error in reading configuration: %s\n", err)
 	}
+	// Creating database connection
+	db, err := sql.Open("postgres", configuration.DBUrl)
+	dbQueries := database.New(db)
 
 	// We can create pointers using the & operator
 	current_state := &state {
 		config: &configuration,
+		database: dbQueries,
 	}
 
 	commands_list := commands {
 		command_map: map[string]func(*state, command) error {
 			"login": handlerLogin,
+			"register": handlerRegister,
 		},
 	}
 

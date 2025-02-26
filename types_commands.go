@@ -2,10 +2,12 @@ package main
 
 import (
 	"internal/config"
+	"github.com/megarage9000/go-blog-aggregator/internal/database"
 )
 
 type state struct {
 	config *config.Config
+	database *database.Queries
 }
 
 type command struct {
