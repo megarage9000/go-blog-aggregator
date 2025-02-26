@@ -15,8 +15,8 @@ func handlerLogin(s * state, cmd command) error {
 	}
 
 	name := cmd.arguments[0]
-	if err := checkIfUserExists(s, name); err != nil {
-		return err
+	if err := checkIfUserExists(s, name); err == nil {
+		return fmt.Errorf("error, user %s does not exist\n", name)
 	}
 
 	err := s.config.SetUser(cmd.arguments[0])
@@ -62,15 +62,20 @@ func handlerRegister(s * state, cmd command) error {
 
 func checkIfUserExists(s * state, name string) error {
 	// Check if user exists, if it does return error
-	name_result, err := s.database.GetUser(context.Background(), name)
-	if err != sql.ErrNoRows && err != nil {
+	_, err := s.database.GetUser(context.Background(), name)
+
+	if err == sql.ErrNoRows {
+		// User does not exist, we want this!
+		return nil
+	}
+
+	if err != nil {
 		return fmt.Errorf("error in Getting User: %w\n", err)
 	}
 
-	if name_result != "" {
-		return fmt.Errorf("error, name for %s already exists, output: %s\n", name, name_result)
-	}
-	return nil
+	// If we get here, the user was found (no errors and rows exist)
+	// We should return an error because the user already exists
+	return fmt.Errorf("user %s already exists", name)
 }
 
 // Command methods
