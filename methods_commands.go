@@ -9,6 +9,38 @@ import (
 	"github.com/megarage9000/go-blog-aggregator/internal/database"
 )
 
+func handlerUsers(s * state, cmd command) error {
+	if len(cmd.arguments) != 0 {
+		return fmt.Errorf("error, arguments provided when not needed");
+	}
+
+	users, err := s.database.GetUsers(context.Background());
+	if err != nil {
+		return fmt.Errorf("error: %s", err);
+	}
+
+	for _, user := range users {
+		var output string
+		if user.Name == s.config.CurrentUserName {
+			output = fmt.Sprintf("* %s (current)\n", user.Name);
+		} else {
+			output = fmt.Sprintf("* %s\n", user.Name);
+		}
+		fmt.Printf(output);
+	}
+
+	return nil;
+}
+
+func handlerReset(s * state, cmd command) error {
+	if len(cmd.arguments) != 0 {
+		return fmt.Errorf("error, arguments provided when not needed");
+	}
+
+	s.database.Reset(context.Background());
+	return nil;
+}
+
 func handlerLogin(s * state, cmd command) error {
 	if len(cmd.arguments) == 0 {
 		return fmt.Errorf("error, no arguments provided")

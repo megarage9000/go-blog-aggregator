@@ -29,6 +29,8 @@ func main() {
 		command_map: map[string]func(*state, command) error {
 			"login": handlerLogin,
 			"register": handlerRegister,
+			"reset": handlerReset,
+			"users": handlerUsers,
 		},
 	}
 
