@@ -94,7 +94,7 @@ func handlerRegister(s * state, cmd command) error {
 
 func handlerAgg(s * state, cmd command) error {
 	if len(cmd.arguments) > 0 {
-		return fmt.Errorf("error, arguments are needed\n")
+		return fmt.Errorf("error, arguments are not needed\n")
 	}
 
 	feed, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
@@ -116,6 +116,20 @@ func handlerAddFeed(s * state, cmd command) error {
 	url := cmd.arguments[1]
 
 	err := addFeed(name, url, s.config.CurrentUserName, s.database)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func handlerListFeed(s * state, cmd command) error {
+	if len(cmd.arguments) > 0 {
+		return fmt.Errorf("error, arguments are not needed\n")
+	}
+
+	err := listFeed(s.database)
 
 	if err != nil {
 		return err

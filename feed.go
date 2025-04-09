@@ -34,3 +34,22 @@ func addFeed(name string, url string, username string, db *database.Queries) err
 	fmt.Printf("%+v", feed)
 	return nil
 }
+
+func listFeed(db *database.Queries) error {
+	feeds, err := db.GetFeeds(context.Background())
+
+	if err != nil {
+		return err
+	}
+
+	for _, feed := range feeds {
+		name := feed.Name
+		url := feed.Url
+		userName, err := db.GetUserName(context.Background(), feed.UserID)
+		if err == nil {
+			fmt.Printf(" ==== FEED ==== \n%s\n%s\n%s\n", name, url, userName)
+		}
+	}
+
+	return nil
+}
