@@ -106,6 +106,24 @@ func handlerAgg(s * state, cmd command) error {
 	return nil
 }	
 
+func handlerAddFeed(s * state, cmd command) error {
+	if len(cmd.arguments) != 2 {
+		return fmt.Errorf("error, need name and url")
+	}
+
+	// fmt.Printf("I got here")
+	name := cmd.arguments[0]
+	url := cmd.arguments[1]
+
+	err := addFeed(name, url, s.config.CurrentUserName, s.database)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func checkIfUserExists(s * state, name string) error {
 	// Check if user exists, if it does return error
 	_, err := s.database.GetUser(context.Background(), name)
