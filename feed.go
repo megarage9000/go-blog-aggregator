@@ -31,6 +31,8 @@ func addFeed(name string, url string, username string, db *database.Queries) err
 		return err
 	}
 
+	follow(db, url, username)
+
 	fmt.Printf("%+v", feed)
 	return nil
 }
@@ -49,6 +51,55 @@ func listFeed(db *database.Queries) error {
 		if err == nil {
 			fmt.Printf(" ==== FEED ==== \n%s\n%s\n%s\n", name, url, userName)
 		}
+	}
+
+	return nil
+}
+
+func follow(db *database.Queries, url string, userName string) error {
+
+	// Get user and feed
+	user, err := db.GetUser(context.Background(), userName)
+	if err != nil {
+		return err
+	}
+
+	feed, err := db.GetFeedFromURL(context.Background(), url)
+	if err != nil {
+		return err
+	}
+
+	feedFollow := database.CreateFeedFollowParams {
+		ID: uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID: user.ID,
+		FeedID: feed.ID,
+	}
+
+	result, err := db.CreateFeedFollow(context.Background(), feedFollow)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%+v", result)
+
+	return nil
+}
+
+func following(db *database.Queries, userName string) error {
+	user, err := db.GetUser(context.Background(), userName)
+	if err != nil {
+		return err
+	}
+
+	feedFollows, err := db.GetFeedFollowsForUser(context.Background(), user.ID)
+	if err != nil {
+		return err
+	}
+
+	for _, feedFollow := range feedFollows {
+		fmt.Printf("%s\n", feedFollow.FeedName)
 	}
 
 	return nil

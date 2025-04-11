@@ -138,6 +138,36 @@ func handlerListFeed(s * state, cmd command) error {
 	return nil
 }
 
+func handlerFollowFeed(s * state, cmd command) error {
+	if(len(cmd.arguments) != 1) {
+		return fmt.Errorf("error, need url argument")
+	}
+
+	url := cmd.arguments[0]
+
+	err := follow(s.database, url, s.config.CurrentUserName)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func handlerListFollowing(s * state, cmd command) error {
+	if(len(cmd.arguments) != 0) {
+		return fmt.Errorf("error, no arguments are needed")
+	}
+
+	err := following(s.database, s.config.CurrentUserName)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func checkIfUserExists(s * state, name string) error {
 	// Check if user exists, if it does return error
 	_, err := s.database.GetUser(context.Background(), name)
