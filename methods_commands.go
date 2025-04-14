@@ -154,6 +154,22 @@ func handlerFollowFeed(s * state, cmd command, user database.User) error {
 	return nil
 }
 
+func handlerUnfollowFeed(s * state, cmd command, user database.User) error {
+	if(len(cmd.arguments) != 1) {
+		return fmt.Errorf("error, need url argument")
+	}
+
+	url := cmd.arguments[0]
+
+	err := unfollow(s.database, user, url)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func handlerListFollowing(s * state, cmd command, user database.User) error {
 	if(len(cmd.arguments) != 0) {
 		return fmt.Errorf("error, no arguments are needed")

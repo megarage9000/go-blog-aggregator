@@ -88,3 +88,17 @@ func following(db *database.Queries, user database.User) error {
 
 	return nil
 }
+
+func unfollow(db *database.Queries, user database.User, url string) error {
+	feed, err := db.GetFeedFromURL(context.Background(), url)
+	if err != nil {
+		return err
+	}
+
+	unfollowParams := database.UnfollowFeedParams {
+		UserID: user.ID,
+		FeedID: feed.ID,
+	}
+
+	return db.UnfollowFeed(context.Background(), unfollowParams)
+}
