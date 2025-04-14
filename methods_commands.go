@@ -106,7 +106,7 @@ func handlerAgg(s * state, cmd command) error {
 	return nil
 }	
 
-func handlerAddFeed(s * state, cmd command) error {
+func handlerAddFeed(s * state, cmd command, user database.User) error {
 	if len(cmd.arguments) != 2 {
 		return fmt.Errorf("error, need name and url")
 	}
@@ -115,7 +115,7 @@ func handlerAddFeed(s * state, cmd command) error {
 	name := cmd.arguments[0]
 	url := cmd.arguments[1]
 
-	err := addFeed(name, url, s.config.CurrentUserName, s.database)
+	err := addFeed(name, url, user, s.database)
 
 	if err != nil {
 		return err
@@ -138,14 +138,14 @@ func handlerListFeed(s * state, cmd command) error {
 	return nil
 }
 
-func handlerFollowFeed(s * state, cmd command) error {
+func handlerFollowFeed(s * state, cmd command, user database.User) error {
 	if(len(cmd.arguments) != 1) {
 		return fmt.Errorf("error, need url argument")
 	}
 
 	url := cmd.arguments[0]
 
-	err := follow(s.database, url, s.config.CurrentUserName)
+	err := follow(s.database, url, user)
 
 	if err != nil {
 		return err
@@ -154,12 +154,12 @@ func handlerFollowFeed(s * state, cmd command) error {
 	return nil
 }
 
-func handlerListFollowing(s * state, cmd command) error {
+func handlerListFollowing(s * state, cmd command, user database.User) error {
 	if(len(cmd.arguments) != 0) {
 		return fmt.Errorf("error, no arguments are needed")
 	}
 
-	err := following(s.database, s.config.CurrentUserName)
+	err := following(s.database, user)
 
 	if err != nil {
 		return err

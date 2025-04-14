@@ -8,13 +8,7 @@ import(
 	"github.com/megarage9000/go-blog-aggregator/internal/database"	
 )
 
-func addFeed(name string, url string, username string, db *database.Queries) error {
-
-	user, err := db.GetUser(context.Background(), username)
-
-	if err != nil {
-		return err
-	}
+func addFeed(name string, url string, user database.User, db *database.Queries) error {
 
 	feedParams := database.CreateFeedParams {
 		ID: uuid.New(),
@@ -31,7 +25,7 @@ func addFeed(name string, url string, username string, db *database.Queries) err
 		return err
 	}
 
-	follow(db, url, username)
+	follow(db, url, user)
 
 	fmt.Printf("%+v", feed)
 	return nil
@@ -56,13 +50,7 @@ func listFeed(db *database.Queries) error {
 	return nil
 }
 
-func follow(db *database.Queries, url string, userName string) error {
-
-	// Get user and feed
-	user, err := db.GetUser(context.Background(), userName)
-	if err != nil {
-		return err
-	}
+func follow(db *database.Queries, url string, user database.User) error {
 
 	feed, err := db.GetFeedFromURL(context.Background(), url)
 	if err != nil {
@@ -87,11 +75,7 @@ func follow(db *database.Queries, url string, userName string) error {
 	return nil
 }
 
-func following(db *database.Queries, userName string) error {
-	user, err := db.GetUser(context.Background(), userName)
-	if err != nil {
-		return err
-	}
+func following(db *database.Queries, user database.User) error {
 
 	feedFollows, err := db.GetFeedFollowsForUser(context.Background(), user.ID)
 	if err != nil {

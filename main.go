@@ -32,10 +32,10 @@ func main() {
 			"reset": handlerReset,
 			"users": handlerUsers,
 			"agg": handlerAgg,
-			"addfeed": handlerAddFeed,
+			"addfeed": middlewareLoggedIn(handlerAddFeed),
 			"feeds" : handlerListFeed,
-			"follow": handlerFollowFeed,
-			"following": handlerListFollowing,
+			"follow": middlewareLoggedIn(handlerFollowFeed),
+			"following": middlewareLoggedIn(handlerListFollowing),
 		},
 	}
 
