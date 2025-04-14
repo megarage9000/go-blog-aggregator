@@ -7,8 +7,54 @@ import(
 	"encoding/xml"
 	"html"
 	"fmt"
+	"github.com/megarage9000/go-blog-aggregator/internal/database"
+	"time"
 )
 
+// Helper function for RSSFeed and RSSItem feed
+func (rssItem *RSSItem) PrintFeedItem() {
+	fmt.Println(" ---- RSS Item ---- ")
+	fmt.Println(rssItem.Title)
+	fmt.Println(rssItem.Link)
+	fmt.Println(rssItem.Description)
+	fmt.Println(rssItem.PubDate)
+}
+
+func (rssFeed *RSSFeed) PrintFeed() {
+	fmt.Println("---- RSS Feed ---- ")
+	fmt.Println(rssFeed.Channel.Title)
+	fmt.Println(rssFeed.Channel.Link)
+	fmt.Println(rssFeed.Channel.Description)
+
+	for _, rssItem := range rssFeed.Channel.Item {
+		rssItem.PrintFeedItem()
+	}
+}
+
+func scrapeFeed(ctx context.Context, db *database.Queries) error {
+	feed, err := db.GetNextFeedToFetch(ctx)
+	if err != nil {
+		return err
+	}
+
+	markFeedFetchedArgs := database.MarkFeedFetchedParams {
+		ID: feed.ID,
+		CreatedAt: time.Now(),
+	}
+
+	feedFetchedErr := db.MarkFeedFetched(ctx, markFeedFetchedArgs)
+	if feedFetchedErr != nil {
+		return feedFetchedErr
+	}
+
+	rssFeed, err := fetchFeed(ctx, feed.Url)
+	if err != nil {
+		return err
+	}
+
+	rssFeed.PrintFeed()
+	return nil
+}
 
 func fetchFeed(ctx context.Context, feedUrl string) (*RSSFeed, error) {
 
@@ -53,24 +99,5 @@ func RemoveEntities(str *string) {
 	*str = html.UnescapeString(*str)
 }
 
-// Helper function for RSSFeed and RSSItem feed
 
-func (rssItem *RSSItem) PrintFeedItem() {
-	fmt.Println(" ---- RSS Item ---- ")
-	fmt.Println(rssItem.Title)
-	fmt.Println(rssItem.Link)
-	fmt.Println(rssItem.Description)
-	fmt.Println(rssItem.PubDate)
-}
-
-func (rssFeed *RSSFeed) PrintFeed() {
-	fmt.Println("---- RSS Feed ---- ")
-	fmt.Println(rssFeed.Channel.Title)
-	fmt.Println(rssFeed.Channel.Link)
-	fmt.Println(rssFeed.Channel.Description)
-
-	for _, rssItem := range rssFeed.Channel.Item {
-		rssItem.PrintFeedItem()
-	}
-}
 
