@@ -114,8 +114,7 @@ func (q *Queries) GetFeeds(ctx context.Context) ([]Feed, error) {
 
 const getNextFeedToFetch = `-- name: GetNextFeedToFetch :one
 SELECT id, created_at, updated_at, name, url, user_id, last_fetched_at FROM feed
-ORDER BY feed.last_fetched_at DESC NULLS FIRST 
-LIMIT 1
+ORDER BY feed.last_fetched_at ASC NULLS FIRST
 `
 
 func (q *Queries) GetNextFeedToFetch(ctx context.Context) (Feed, error) {
@@ -135,16 +134,16 @@ func (q *Queries) GetNextFeedToFetch(ctx context.Context) (Feed, error) {
 
 const markFeedFetched = `-- name: MarkFeedFetched :exec
 UPDATE feed
-SET created_at = $2 AND last_fetched_at = $2
+SET updated_at = $2, last_fetched_at = $2
 WHERE feed.id = $1
 `
 
 type MarkFeedFetchedParams struct {
 	ID        uuid.UUID
-	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func (q *Queries) MarkFeedFetched(ctx context.Context, arg MarkFeedFetchedParams) error {
-	_, err := q.db.ExecContext(ctx, markFeedFetched, arg.ID, arg.CreatedAt)
+	_, err := q.db.ExecContext(ctx, markFeedFetched, arg.ID, arg.UpdatedAt)
 	return err
 }

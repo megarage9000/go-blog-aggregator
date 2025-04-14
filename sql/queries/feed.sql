@@ -20,10 +20,9 @@ WHERE feed.url = $1;
 
 -- name: MarkFeedFetched :exec
 UPDATE feed
-SET created_at = $2 AND last_fetched_at = $2
+SET updated_at = $2, last_fetched_at = $2
 WHERE feed.id = $1;
 
 -- name: GetNextFeedToFetch :one
 SELECT * FROM feed
-ORDER BY feed.last_fetched_at DESC NULLS FIRST 
-LIMIT 1;
+ORDER BY feed.last_fetched_at ASC NULLS FIRST; 

@@ -34,22 +34,22 @@ func (rssFeed *RSSFeed) PrintFeed() {
 func scrapeFeed(ctx context.Context, db *database.Queries) error {
 	feed, err := db.GetNextFeedToFetch(ctx)
 	if err != nil {
-		return err
+		return fmt.Errorf("GetNextFeedFetch: %w", err)
 	}
 
 	markFeedFetchedArgs := database.MarkFeedFetchedParams {
 		ID: feed.ID,
-		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	feedFetchedErr := db.MarkFeedFetched(ctx, markFeedFetchedArgs)
 	if feedFetchedErr != nil {
-		return feedFetchedErr
+		return fmt.Errorf("MarkFeedFetched: %w", feedFetchedErr)
 	}
 
 	rssFeed, err := fetchFeed(ctx, feed.Url)
 	if err != nil {
-		return err
+		return fmt.Errorf("fetchFeed: %w", feedFetchedErr)
 	}
 
 	rssFeed.PrintFeed()

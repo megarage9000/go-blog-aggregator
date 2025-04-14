@@ -99,14 +99,17 @@ func handlerAgg(s * state, cmd command) error {
 
 	timeBetweenFetches, err := time.ParseDuration(cmd.arguments[0])
 	if err != nil {
-		return fmt.Errorf("error in parsing duration, %v\n", err)
+		return fmt.Errorf("error in parsing duration, %w\n", err)
 	}
 	fmt.Printf("Collecting feeds every %s\n", cmd.arguments[0])
 
 	ticker := time.NewTicker(timeBetweenFetches)
 	for ; ; <-ticker.C {
 		fmt.Printf("Collecting feed...\n")
-		scrapeFeed(context.Background(), s.database)
+		err := scrapeFeed(context.Background(), s.database)
+		if err != nil {
+			return fmt.Errorf("error: %w\n", err)
+		}
 	}
 
 	// feed, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
