@@ -121,6 +121,22 @@ func (q *Queries) GetFeedFollowsForUser(ctx context.Context, userID uuid.UUID) (
 	return items, nil
 }
 
+const markFeedFetched = `-- name: MarkFeedFetched :exec
+UPDATE feed
+SET created_at = $2 AND last_fetched_at = $2
+WHERE feed.id = $1
+`
+
+type MarkFeedFetchedParams struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+}
+
+func (q *Queries) MarkFeedFetched(ctx context.Context, arg MarkFeedFetchedParams) error {
+	_, err := q.db.ExecContext(ctx, markFeedFetched, arg.ID, arg.CreatedAt)
+	return err
+}
+
 const unfollowFeed = `-- name: UnfollowFeed :exec
 DELETE FROM feed_follows
 WHERE feed_follows.user_id = $1 AND feed_follows.feed_id = $2
