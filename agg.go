@@ -49,7 +49,7 @@ func scrapeFeed(ctx context.Context, db *database.Queries) error {
 
 	rssFeed, err := fetchFeed(ctx, feed.Url)
 	if err != nil {
-		return fmt.Errorf("fetchFeed: %w", feedFetchedErr)
+		return fmt.Errorf("fetchFeed: %w", err)
 	}
 
 	savePostErr := savePost(ctx, db, rssFeed, feed.ID)

@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"time"
 	"github.com/megarage9000/go-blog-aggregator/internal/database"
+	"strconv"
 )
 
 func handlerUsers(s * state, cmd command) error {
@@ -203,12 +204,25 @@ func handlerListFollowing(s * state, cmd command, user database.User) error {
 
 func handlerBrowsePosts(s * state, cmd command, user database.User) error {
 
-	numPosts := 2
+	var numPosts int32
 	if(len(cmd.arguments) == 1) {
-		numPosts := cmd.arguments[0]
+		numPostsParsed, err := strconv.ParseInt(cmd.arguments[0], 10, 32)
+		if err != nil {
+			fmt.Errorf("error, could not process number of posts")
+		}
+		numPosts = int32(numPostsParsed)
+
+	} else {
+		numPosts = int32(2)
 	}
 
-	err := 
+	err := browsePosts(context.Background(), user, s.database, numPosts)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func checkIfUserExists(s * state, name string) error {

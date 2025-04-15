@@ -69,7 +69,7 @@ func browsePosts(ctx context.Context, user database.User, db * database.Queries,
 		if userPost.PublishedAt.Valid {
 			pubDate = userPost.PublishedAt.Time
 		}
-		fmt.Printf("--- Post --- \nTitle: %s\nDescription: %s\nPublished At: \n", userPost.Title, description, pubDate)
+		fmt.Printf("--- Post --- \nTitle: %s\nDescription: %s\nPublished At: %v\n", userPost.Title, description, pubDate)
 	}
 
 	return nil
