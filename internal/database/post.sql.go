@@ -24,7 +24,7 @@ VALUES(
     $6,
     $7,
     $8
-)
+) ON CONFLICT(url) DO NOTHING
 
 RETURNING id, created_at, updated_at, title, url, description, published_at, feed_id
 `
@@ -74,10 +74,16 @@ WITH user_feed_follows AS (
 SELECT post.id, post.created_at, post.updated_at, post.title, post.url, post.description, post.published_at, post.feed_id FROM post
 INNER JOIN user_feed_follows
 ON user_feed_follows.feed_id = post.feed_id
+LIMIT $2
 `
 
-func (q *Queries) GetPostsForUser(ctx context.Context, userID uuid.UUID) ([]Post, error) {
-	rows, err := q.db.QueryContext(ctx, getPostsForUser, userID)
+type GetPostsForUserParams struct {
+	UserID uuid.UUID
+	Limit  int32
+}
+
+func (q *Queries) GetPostsForUser(ctx context.Context, arg GetPostsForUserParams) ([]Post, error) {
+	rows, err := q.db.QueryContext(ctx, getPostsForUser, arg.UserID, arg.Limit)
 	if err != nil {
 		return nil, err
 	}

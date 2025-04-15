@@ -10,7 +10,7 @@ VALUES(
     $6,
     $7,
     $8
-)
+) ON CONFLICT(url) DO NOTHING
 
 RETURNING *;
 
@@ -22,4 +22,5 @@ WITH user_feed_follows AS (
 )
 SELECT post.* FROM post
 INNER JOIN user_feed_follows
-ON user_feed_follows.feed_id = post.feed_id;
+ON user_feed_follows.feed_id = post.feed_id
+LIMIT $2;

@@ -52,9 +52,13 @@ func scrapeFeed(ctx context.Context, db *database.Queries) error {
 		return fmt.Errorf("fetchFeed: %w", feedFetchedErr)
 	}
 
-	rssFeed.PrintFeed()
+	savePostErr := savePost(ctx, db, rssFeed, feed.ID)
+	if savePostErr != nil {
+		return savePostErr
+	}
 	return nil
 }
+
 
 func fetchFeed(ctx context.Context, feedUrl string) (*RSSFeed, error) {
 

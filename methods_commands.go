@@ -201,6 +201,16 @@ func handlerListFollowing(s * state, cmd command, user database.User) error {
 	return nil
 }
 
+func handlerBrowsePosts(s * state, cmd command, user database.User) error {
+
+	numPosts := 2
+	if(len(cmd.arguments) == 1) {
+		numPosts := cmd.arguments[0]
+	}
+
+	err := 
+}
+
 func checkIfUserExists(s * state, name string) error {
 	// Check if user exists, if it does return error
 	_, err := s.database.GetUser(context.Background(), name)

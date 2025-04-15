@@ -11,3 +11,6 @@ CREATE TABLE post (
     feed_id UUID NOT NULL,
     FOREIGN KEY (feed_id) REFERENCES feed(id) ON DELETE CASCADE
 );
+
+-- +goose Down
+DROP TABLE post;
